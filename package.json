@@ -1,5 +1,5 @@
 {
-  "name": "ar oxtrader",
+  "name": "aroxtrader",
   "private": true,
   "workspaces": [
     "packages/*",
