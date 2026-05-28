@@ -1,7 +1,43 @@
+# Dependencies
 node_modules/
 dist/
+
+# Environment
 .env
 .env.local
+.env.*.local
+
+# Logs
 *.log
-.superpowers/
+logs/
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Generated
+.svelte-kit/
+.vite/
+*.tsbuildinfo
+
+# Test / Playwright artifacts
+.playwright-mcp/
+playwright-report/
+test-results/
+
+# Screenshots / runtime artifacts
+*.png
+*.jpg
+*.jpeg
+
+# Runtime config (generated)
+.arox-config.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Superpowers cache
+.superpowers/

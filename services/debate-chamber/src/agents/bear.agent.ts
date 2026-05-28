@@ -1,5 +1,6 @@
 import type { TradeProposal, RiskVerdict, Argument } from "@aroxtrader/shared";
 import { createLogger } from "@aroxtrader/shared";
+import { createDebateAgentConfig } from "../deepagents/config.js";
 
 const log = createLogger("bear-agent");
 
@@ -7,9 +8,19 @@ const SYSTEM_PROMPT = `You are the Bear Agent. Your role is to find every flaw, 
 Analyze: overbought signals, resistance levels, macro headwinds, sector weakness, poor risk/reward.
 Output a structured Argument with counter-thesis, risk list, confidence score, and worst-case scenario.`;
 
+let agent: any = null;
+
 export async function start(): Promise<void> {
   log.info("BearAgent initializing with DeepAgents runtime");
+  const { createDeepAgent } = await import("deepagents");
+  const config = await createDebateAgentConfig("BearAgent", SYSTEM_PROMPT);
+  agent = createDeepAgent(config);
   log.info("BearAgent started");
+}
+
+export async function invokeAgent(input: string): Promise<unknown> {
+  if (!agent) throw new Error("BearAgent not initialized");
+  return agent.invoke({ messages: [{ role: "user", content: input }] });
 }
 
 export async function argue(proposal: TradeProposal, risk: RiskVerdict): Promise<Argument> {

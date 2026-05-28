@@ -1,5 +1,6 @@
 import type { TradeProposal, Verdict, Order } from "@aroxtrader/shared";
 import { createLogger } from "@aroxtrader/shared";
+import { createRiskAgentConfig } from "../deepagents/config.js";
 import { placeOrder } from "../integrations/upstox.rest.js";
 
 const log = createLogger("execution-agent");
@@ -10,9 +11,19 @@ You have tools for: placing orders (LIMIT/MARKET), checking order status, pre-fl
 You are the final mandatory gate — you perform a last pre-flight check before any order reaches the exchange.
 In paper mode, you simulate fills at market prices without real capital at risk.`;
 
+let agent: any = null;
+
 export async function start(): Promise<void> {
   log.info("ExecutionAgent initializing with DeepAgents runtime (paper mode)");
+  const { createDeepAgent } = await import("deepagents");
+  const config = await createRiskAgentConfig("ExecutionAgent", EXECUTION_AGENT_PROMPT);
+  agent = createDeepAgent(config);
   log.info("ExecutionAgent started");
+}
+
+export async function invokeAgent(input: string): Promise<unknown> {
+  if (!agent) throw new Error("ExecutionAgent not initialized");
+  return agent.invoke({ messages: [{ role: "user", content: input }] });
 }
 
 export async function executeTrade(verdict: Verdict, proposal: TradeProposal): Promise<Order> {

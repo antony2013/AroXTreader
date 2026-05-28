@@ -8,7 +8,8 @@
   ],
   "devDependencies": {
     "typescript": "^5.7.0",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@elysiajs/cors": "latest"
   },
   "scripts": {
     "dev": "bun run scripts/dev.sh",

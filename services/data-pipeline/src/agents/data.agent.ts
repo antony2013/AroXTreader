@@ -1,5 +1,6 @@
 import type { MarketTick } from "@aroxtrader/shared";
 import { createLogger } from "@aroxtrader/shared";
+import { createPipelineAgentConfig } from "../deepagents/config.js";
 
 const log = createLogger("data-agent");
 
@@ -8,12 +9,22 @@ You receive raw price ticks and order book data, validate it, and route it to th
 You have tools for: subscribing/unsubscribing to symbols, querying latest ticks, detecting price anomalies and volume spikes.
 When you detect a breakout (price crossing key level) or volume spike (>2x 20-period avg), emit a trigger event.`;
 
+let agent: any = null;
+
 const tickCache: MarketTick[] = [];
 const MAX_CACHE = 1000;
 
 export async function start(): Promise<void> {
   log.info("DataAgent initializing with DeepAgents runtime");
+  const { createDeepAgent } = await import("deepagents");
+  const config = await createPipelineAgentConfig("DataAgent", DATA_AGENT_PROMPT);
+  agent = createDeepAgent(config);
   log.info("DataAgent started");
+}
+
+export async function invokeAgent(input: string): Promise<unknown> {
+  if (!agent) throw new Error("DataAgent not initialized");
+  return agent.invoke({ messages: [{ role: "user", content: input }] });
 }
 
 export function cacheTick(tick: MarketTick): void {

@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { createLogger } from "@aroxtrader/shared";
 import { debateChamberRoutes } from "./routes.js";
 import { start as startBull } from "./agents/bull.agent.js";
@@ -14,6 +15,7 @@ await startJudge();
 const PORT = Number(process.env.PORT) || 3004;
 
 const app = new Elysia()
+  .use(cors())
   .use(debateChamberRoutes)
   .get("/health", () => ({ status: "ok", service: "debate-chamber" }))
   .listen(PORT);

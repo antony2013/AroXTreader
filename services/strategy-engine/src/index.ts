@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { createLogger } from "@aroxtrader/shared";
 import { strategyEngineRoutes } from "./routes.js";
 import { start as startAnalyst } from "./agents/analyst.agent.js";
@@ -14,6 +15,7 @@ await startCoder();
 const PORT = Number(process.env.PORT) || 3002;
 
 const app = new Elysia()
+  .use(cors())
   .use(strategyEngineRoutes)
   .get("/health", () => ({ status: "ok", service: "strategy-engine" }))
   .listen(PORT);

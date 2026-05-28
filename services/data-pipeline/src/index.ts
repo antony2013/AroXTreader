@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { createLogger } from "@aroxtrader/shared";
 import { dataPipelineRoutes } from "./routes.js";
 import { start as startDataAgent, cacheTick } from "./agents/data.agent.js";
@@ -24,6 +25,7 @@ onNews((event) => {
 const PORT = Number(process.env.PORT) || 3001;
 
 const app = new Elysia()
+  .use(cors())
   .use(dataPipelineRoutes)
   .get("/health", () => ({ status: "ok", service: "data-pipeline" }))
   .listen(PORT);

@@ -1,5 +1,6 @@
 import type { NewsEvent } from "@aroxtrader/shared";
 import { createLogger } from "@aroxtrader/shared";
+import { createPipelineAgentConfig } from "../deepagents/config.js";
 
 const log = createLogger("news-agent");
 
@@ -8,12 +9,22 @@ You monitor RSS feeds, corporate announcements (NSE/BSE), FII/DII data, and econ
 You have tools for: fetching news by symbol, classifying sentiment (POSITIVE/NEGATIVE/NEUTRAL), assessing impact (HIGH/MED/LOW).
 When you detect material news (high impact on a tracked symbol), emit a trigger event to AnalystAgent.`;
 
+let agent: any = null;
+
 const newsCache: NewsEvent[] = [];
 const MAX_CACHE = 200;
 
 export async function start(): Promise<void> {
   log.info("NewsAgent initializing with DeepAgents runtime");
+  const { createDeepAgent } = await import("deepagents");
+  const config = await createPipelineAgentConfig("NewsAgent", NEWS_AGENT_PROMPT);
+  agent = createDeepAgent(config);
   log.info("NewsAgent started");
+}
+
+export async function invokeAgent(input: string): Promise<unknown> {
+  if (!agent) throw new Error("NewsAgent not initialized");
+  return agent.invoke({ messages: [{ role: "user", content: input }] });
 }
 
 export function cacheNews(event: NewsEvent): void {

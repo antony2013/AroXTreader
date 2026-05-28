@@ -1,5 +1,6 @@
 import type { TradeProposal, RiskVerdict } from "@aroxtrader/shared";
-import { createLogger } from "@aroxtrader/shared";
+import { createLogger, escalateRiskBreach } from "@aroxtrader/shared";
+import { createRiskAgentConfig } from "../deepagents/config.js";
 
 const log = createLogger("risk-agent");
 
@@ -9,6 +10,8 @@ You have tools for: computing position VaR, checking sector exposure, validating
 During TRENDING_UP regimes, you may relax position limits slightly. During VOLATILE regimes, you tighten all limits.
 You are the first mandatory gate — if you reject a trade, it dies here with no appeal. If you approve, the trade proceeds to the Debate Chamber.
 Rule: FAIL CLOSED. If you cannot validate, reject the trade.`;
+
+let agent: any = null;
 
 interface RiskConfig {
   maxPositionSizePct: number;
@@ -27,7 +30,15 @@ let tradingFrozen = false;
 
 export async function start(): Promise<void> {
   log.info("RiskAgent initializing with DeepAgents runtime for adaptive risk");
+  const { createDeepAgent } = await import("deepagents");
+  const cfg = await createRiskAgentConfig("RiskAgent", RISK_AGENT_PROMPT);
+  agent = createDeepAgent(cfg);
   log.info("RiskAgent started");
+}
+
+export async function invokeAgent(input: string): Promise<unknown> {
+  if (!agent) throw new Error("RiskAgent not initialized");
+  return agent.invoke({ messages: [{ role: "user", content: input }] });
 }
 
 export function validate(proposal: TradeProposal): RiskVerdict {
@@ -37,6 +48,11 @@ export function validate(proposal: TradeProposal): RiskVerdict {
 
   if (dailyPnl < config.dailyLossLimit) {
     tradingFrozen = true;
+    escalateRiskBreach("Daily loss limit breached — trading frozen", {
+      dailyPnl,
+      limit: config.dailyLossLimit,
+      proposal: proposal.id,
+    });
     return { approved: false, limits: { max_size: config.maxPositionSizePct, max_loss: Math.abs(config.dailyLossLimit) }, reason: "Daily loss limit breached — trading frozen" };
   }
 

@@ -1,17 +1,21 @@
 import type { CreateDeepAgentParams } from "deepagents";
+import { getLlmModel, getLlmBaseUrl } from "@aroxtrader/shared";
 
 export async function createDebateAgentConfig(
-  systemPrompt: string
-): Promise<CreateDeepAgentParams> {
+  name: string,
+  systemPrompt: string,
+  tools: CreateDeepAgentParams["tools"] = []
+): Promise<any> {
   const { ChatOllama } = await import("@langchain/ollama");
 
   return {
     model: new ChatOllama({
-      model: process.env.OLLAMA_MODEL ?? "llama3",
-      baseUrl: process.env.OLLAMA_BASE_URL ?? "http://localhost:11434",
+      model: getLlmModel(),
+      baseUrl: getLlmBaseUrl(),
       temperature: 0.3,
     }),
     systemPrompt,
-    tools: [],
+    tools,
+    name,
   };
 }

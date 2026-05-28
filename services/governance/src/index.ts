@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { cors } from "@elysiajs/cors";
 import { createLogger } from "@aroxtrader/shared";
 import { governanceRoutes } from "./routes.js";
 import { start as startCeo } from "./agents/ceo.agent.js";
@@ -16,6 +17,7 @@ await startJitrl();
 const PORT = Number(process.env.PORT) || 3005;
 
 const app = new Elysia()
+  .use(cors())
   .use(governanceRoutes)
   .get("/health", () => ({ status: "ok", service: "governance" }))
   .listen(PORT);
