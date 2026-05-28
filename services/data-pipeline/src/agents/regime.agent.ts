@@ -16,8 +16,9 @@ let currentRegime: Regime = {
   timestamp: Date.now(),
 };
 
-export function start(): void {
-  log.info("RegimeAgent initialized with DeepAgents runtime");
+export async function start(): Promise<void> {
+  log.info("RegimeAgent initializing with DeepAgents runtime");
+  log.info("RegimeAgent started");
 }
 
 export function getCurrentRegime(): Regime {

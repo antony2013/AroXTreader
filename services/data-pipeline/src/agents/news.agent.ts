@@ -11,8 +11,9 @@ When you detect material news (high impact on a tracked symbol), emit a trigger 
 const newsCache: NewsEvent[] = [];
 const MAX_CACHE = 200;
 
-export function start(): void {
-  log.info("NewsAgent initialized with DeepAgents runtime");
+export async function start(): Promise<void> {
+  log.info("NewsAgent initializing with DeepAgents runtime");
+  log.info("NewsAgent started");
 }
 
 export function cacheNews(event: NewsEvent): void {

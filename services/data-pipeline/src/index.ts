@@ -9,9 +9,9 @@ import { startPolling as startNewsPolling, onNews, stop as stopNews } from "./in
 
 const log = createLogger("data-pipeline");
 
-startDataAgent();
-startNewsAgent();
-startRegimeAgent();
+await startDataAgent();
+await startNewsAgent();
+await startRegimeAgent();
 
 onTick((tick) => {
   cacheTick(tick);
@@ -21,21 +21,26 @@ onNews((event) => {
   cacheNews(event);
 });
 
+const PORT = Number(process.env.PORT) || 3001;
+
 const app = new Elysia()
   .use(dataPipelineRoutes)
   .get("/health", () => ({ status: "ok", service: "data-pipeline" }))
-  .listen(3001);
+  .listen(PORT);
 
-log.info("Data Pipeline service running on port 3001");
+log.info(`Data Pipeline service running on port ${PORT}`);
 
 // Connect to external data sources
-connectWs(process.env.UPSTOX_ACCESS_TOKEN ?? "");
-startNewsPolling();
+connectWs(process.env.UPSTOX_ACCESS_TOKEN ?? "").catch((err) => log.error("WebSocket connect failed", err));
+startNewsPolling().catch((err) => log.error("News polling start failed", err));
 
-process.on("SIGTERM", () => {
+const shutdown = () => {
   disconnectWs();
   stopNews();
   process.exit(0);
-});
+};
+
+process.on("SIGTERM", shutdown);
+process.on("SIGINT", shutdown);
 
 export type App = typeof app;
