@@ -1,4 +1,4 @@
-import type { Directive, Report, TradeScore } from "../types/governance.js";
+import type { Directive, DirectiveAction, Report, TradeScore } from "../types/governance.js";
 
 export interface GovernanceRoutes {
   "evaluate/score": {
@@ -15,7 +15,7 @@ export interface GovernanceRoutes {
   };
   "ceo/directive": {
     POST: {
-      body: { target_agent: string; action: string; reason: string };
+      body: { target_agent: string; action: DirectiveAction; reason: string };
       response: Directive;
     };
   };
