@@ -1,0 +1,22 @@
+version: "0.1"
+
+vector_store:
+  provider: qdrant
+  config:
+    host: localhost
+    port: 6333
+
+llm:
+  provider: openai
+  config:
+    model: gpt-4o
+
+embedder:
+  provider: openai
+  config:
+    model: text-embedding-3-small
+
+history_db:
+  provider: sqlite
+  config:
+    path: /data/mem0.db

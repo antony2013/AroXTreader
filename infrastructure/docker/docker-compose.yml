@@ -1,0 +1,74 @@
+version: "3.9"
+
+services:
+  mem0:
+    image: mem0/mem0:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../mem0/config.yaml:/app/config.yaml
+    restart: unless-stopped
+
+  data-pipeline:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - UPSTOX_ACCESS_TOKEN=${UPSTOX_ACCESS_TOKEN}
+    depends_on:
+      - mem0
+
+  strategy-engine:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    ports:
+      - "3002:3002"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4o}
+    depends_on:
+      - mem0
+
+  risk-execution:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      - UPSTOX_ACCESS_TOKEN=${UPSTOX_ACCESS_TOKEN}
+
+  debate-chamber:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    ports:
+      - "3004:3004"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4o}
+    depends_on:
+      - mem0
+
+  governance:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    ports:
+      - "3005:3005"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4o}
+    depends_on:
+      - mem0
+
+  dashboard:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile
+    ports:
+      - "5173:5173"
+    command: ["bun", "run", "--cwd", "apps/dashboard", "dev", "--host", "0.0.0.0"]
