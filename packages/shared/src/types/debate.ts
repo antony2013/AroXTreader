@@ -1,5 +1,6 @@
 export interface Argument {
   agent: "BULL" | "BEAR";
+  trade_id: string;
   thesis: string;
   evidence: string[];
   confidence: number;

@@ -14,12 +14,20 @@ export interface QuantModel {
   probability: number;
 }
 
+export interface BacktestResult {
+  sharpe: number;
+  max_drawdown: number;
+  win_rate: number;
+  total_trades: number;
+  metrics: Record<string, number>;
+}
+
 export interface Strategy {
   id: string;
   name: string;
   code: string;
-  params: Record<string, unknown>;
-  backtest_result: Record<string, unknown>;
+  params: Record<string, string | number | boolean>;
+  backtest_result: BacktestResult;
   status: "ACTIVE" | "PAUSED" | "DISABLED";
 }
 

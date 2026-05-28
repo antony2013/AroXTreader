@@ -2,9 +2,10 @@ export interface Order {
   id: string;
   trade_id: string;
   symbol: string;
+  transaction_type: "BUY" | "SELL";
   quantity: number;
   price: number;
-  type: "LIMIT" | "MARKET";
+  type: "LIMIT" | "MARKET" | "STOP_LOSS" | "STOP_LOSS_LIMIT";
   product: "DELIVERY" | "INTRADAY";
   status: "PENDING" | "EXECUTED" | "CANCELLED" | "REJECTED";
   timestamp: number;
@@ -12,6 +13,7 @@ export interface Order {
 
 export interface PositionUpdate {
   order_id: string;
+  symbol: string;
   pnl: number;
   m2m: number;
   unrealized: number;
@@ -38,9 +40,11 @@ export interface Report {
   alerts: string[];
 }
 
+export type DirectiveAction = "PAUSE" | "RESUME" | "SHUTDOWN" | "FREEZE" | "UNFREEZE";
+
 export interface Directive {
   target_agent: string;
-  action: string;
+  action: DirectiveAction;
   reason: string;
   timestamp: number;
 }
