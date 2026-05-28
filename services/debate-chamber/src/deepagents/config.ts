@@ -3,11 +3,12 @@ import type { CreateDeepAgentParams } from "deepagents";
 export async function createDebateAgentConfig(
   systemPrompt: string
 ): Promise<CreateDeepAgentParams> {
-  const { ChatOpenAI } = await import("@langchain/openai");
+  const { ChatOllama } = await import("@langchain/ollama");
 
   return {
-    model: new ChatOpenAI({
-      model: process.env.LLM_MODEL ?? "gpt-4o",
+    model: new ChatOllama({
+      model: process.env.OLLAMA_MODEL ?? "llama3",
+      baseUrl: process.env.OLLAMA_BASE_URL ?? "http://localhost:11434",
       temperature: 0.3,
     }),
     systemPrompt,

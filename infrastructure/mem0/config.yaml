@@ -7,14 +7,15 @@ vector_store:
     port: 6333
 
 llm:
-  provider: openai
+  provider: ollama
   config:
-    model: gpt-4o
+    model: llama3
+    ollama_base_url: http://localhost:11434
 
 embedder:
-  provider: openai
+  provider: ollama
   config:
-    model: text-embedding-3-small
+    model: nomic-embed-text
 
 history_db:
   provider: sqlite

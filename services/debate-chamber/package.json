@@ -9,7 +9,7 @@
   "dependencies": {
     "elysia": "latest",
     "deepagents": "latest",
-    "@langchain/openai": "latest",
+    "@langchain/ollama": "latest",
     "@aroxtrader/shared": "workspace:*"
   },
   "devDependencies": {
