@@ -1,0 +1,26 @@
+{
+  "name": "@aroxtrader/dashboard",
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev --port 5173",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-auto": "^7.0.1",
+    "@sveltejs/kit": "latest",
+    "@sveltejs/vite-plugin-svelte": "latest",
+    "@tailwindcss/vite": "latest",
+    "svelte": "latest",
+    "svelte-check": "latest",
+    "tailwindcss": "latest",
+    "typescript": "^5.7.0",
+    "vite": "latest"
+  },
+  "dependencies": {
+    "@aroxtrader/shared": "workspace:*",
+    "@elysiajs/eden": "latest"
+  }
+}
