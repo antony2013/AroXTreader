@@ -1,0 +1,17 @@
+{
+  "name": "ar oxtrader",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "services/*",
+    "apps/*"
+  ],
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/bun": "latest"
+  },
+  "scripts": {
+    "dev": "bun run scripts/dev.sh",
+    "setup": "bun run scripts/setup.sh"
+  }
+}
